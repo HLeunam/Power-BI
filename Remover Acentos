@@ -1,0 +1,11 @@
+(texto as text) =>
+
+let
+    ComAcentos = Text.ToList("àáâãäèéêëìíîïòóôõöùúûüÀÁÂÃÄÈÉÊËÌÍÎÒÓÔÕÖÙÚÛÜçÇñÑ"),
+    SemAcentos = Text.ToList("aaaaaeeeeiiiiooooouuuuAAAAAEEEEIIIOOOOOUUUUcCnN"),
+    ParesAcentos = List.Zip({ComAcentos, SemAcentos}),
+    TextoQuebrado = Text.ToList(texto),
+    Substituicao = List.ReplaceMatchingItems(TextoQuebrado, ParesAcentos),
+    Resultado = Text.Combine(Substituicao)
+in
+    Resultado
