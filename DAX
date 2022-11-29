@@ -1,0 +1,4 @@
+Comandos de linguagem DAX
+
+# Para converter um arquivo de CSV ou JSON em tabelas:
+TOCSV e TOJSON
