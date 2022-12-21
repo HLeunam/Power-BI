@@ -1,0 +1,66 @@
+
+# Vamos definir os critérios dos quintis
+            Score Valor = 
+            VAR vValor = Cliente[Valor]
+            VAR Quntil1 = PERCENTILE.EXC(Cliente[Valor],0.2)
+            VAR Quintil2 = PERCENTILE.EXC(Cliente[Valor],0.4)
+            VAR Quintil3 = PERCENTILE.EXC(Cliente[Valor],0.6)
+            VAR Quintil4 = PERCENTILE.EXC(Cliente[Valor],0.8)
+            VAR Resultado = 
+             IF(NOT(ISBLANK(vValor)),
+                SWITCH(
+                    TRUE(),
+                    vValor >= Quintil4, 5,
+                    vValor >= Quintil3, 4,
+                    vValor >= Quintil2, 3,
+                    vValor >= Quintil1, 2,
+                    1
+                ),
+            0)
+
+## Para cálculo da Recência (Última compra feita pelo cliente)
+
+    # Primeiro precisamos buscar a última compra feita por cada cliente.
+        Ultima Compra = CALCULATE(
+                                LASTDATE(Movimentos[Data]))
+
+    # Depois, vamos pegar a ultima venda realizada como parâmetro para classificação.
+        Recência=
+        VAR ultimavenda = LASTDATE(ALL(Moveimentos[Data]))
+        RETURN
+
+    # Agora, precisamos saber a diferença de dias entre aSoce última venda e a data da última compra do cliente.
+        DATEDIFF(Cliente[Ultima Compra], ultimavenda,DAY)  
+
+    # Após gerar a quantidade de dias desde a última compra, vamos classificá-los em um score de Recência.
+            Score Recência = 
+            VAR vRecencia = Cliente[Recência]
+            VAR Quintil1 = PERCENTILE.EXC(Cliente[Recência], 0.2)
+            VAR Quintil2 = PERCENTILE.EXC(Cliente[Recência], 0.4)
+            VAR Quintil3 = PERCENTILE.EXC(Cliente[Recência], 0.6)
+            VAR Quintil4 = PERCENTILE.EXC(Cliente[Recência], 0.8)
+            VAR Resultado = 
+                            IF(NOT(ISBLANK(vRecencia),
+                            SWITCH(
+                                    TRUE(),
+                                    vRecencia >= Quintil4, 5,
+                                    vRecencia >= Quintil3
+                            )
+            ))
+
+    # Para Gerar a Frequência, não usaremos quintis por a maior parte da base ter comprado uma única vez.
+            Score Frequência = 
+            VAR vFrequencia = Cliente[Frequência]
+            VAR Resultado = 
+                            IF(NOT(BLANk(vFrequencia)),
+                                SWITCH(
+                                    TRUE(),
+                                    vFrequencia >= 10, 5,
+                                    vFrequencia >= 5, 4,
+                                    vFrequencia >= 3, 3,
+                                    vFrequencia >= 2, 2,
+                                    1),
+                                0
+                            )
+            Return
+            Resultado
