@@ -1,0 +1,42 @@
+let
+    fn = (p) =>
+        let
+            app_key = "38333295000",
+            app_secret = "fed2163e2e8dccb53ff914ce9e2f1258",
+            url = "https://app.omie.com.br/api/v1",
+            endpoint = "/geral/clientes/",
+            header = [#"Content-type" = "application/json" ],
+            body = [
+                call = "ListarClientesResumido",
+                app_key = app_key,
+                app_secret = app_secret,
+                param = {
+                    [
+                        pagina = p,
+                        registros_por_pagina = 100,
+                        apenas_importado_api = "N"
+                    ]
+                }
+            ],
+            request = Web.Contents(
+                url, [
+                    RelativePath = endpoint,
+                    Headers = header,
+                    Content = Json.FromValue(body)
+                ]
+            ),
+            response = Json.Document(request)
+        in
+            response,   
+    
+    loop = List.Generate(
+        ()=> [ p = 1, tabela = fn(p) ],
+        each[p] <= 10,
+        each[ p = [p] + 1, tabela = fn(p) ],
+        each [tabela][clientes_cadastro_resumido]
+    ),
+
+    lista = List.Combine(loop),
+    resultado = Table.FromRecords(lista)
+in
+    resultado
